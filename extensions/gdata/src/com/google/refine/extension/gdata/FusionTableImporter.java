@@ -46,6 +46,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
+import javax.swing.JOptionPane;
 /**
  * OpenRefine parser for Google Spreadsheets.
  * 
@@ -241,7 +242,7 @@ public class FusionTableImporter {
             // is strictly structured with a single line of headers.
             JSONUtilities.safePut(options, "ignoreLines", 0); // number of blank lines at the beginning to ignore
             JSONUtilities.safePut(options, "headerLines", 1); // number of header lines
-
+// JOptionPane.showMessageDialog(null, "FusionTableImporter", "readTable", JOptionPane.WARNING_MESSAGE); // Alex
             TabularImportingParserBase.readTable(
                     project,
                     metadata,

@@ -36,6 +36,7 @@ package com.google.refine.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +48,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.myDatabase.DatabaseOperation;
 import com.google.refine.util.Pool;
 
 public class ColumnRemovalChange extends ColumnChange {
@@ -114,6 +116,17 @@ public class ColumnRemovalChange extends ColumnChange {
             }
             
             project.update();
+
+            
+            try {
+                DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -131,6 +144,29 @@ public class ColumnRemovalChange extends ColumnChange {
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
             project.update();
+            
+            if(project.columnModel.columns.size()==1){
+                try {
+                    DatabaseOperation.databaseTableInput(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+                } catch (ClassNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            else{
+            try {
+                DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         }
     }
 

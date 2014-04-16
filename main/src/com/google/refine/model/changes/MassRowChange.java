@@ -36,6 +36,7 @@ package com.google.refine.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -44,6 +45,7 @@ import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.myDatabase.DatabaseOperation;
 import com.google.refine.util.Pool;
 
 public class MassRowChange implements Change {
@@ -65,6 +67,16 @@ public class MassRowChange implements Change {
             ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProject(project.id);
             
             project.update();
+            
+            try {
+                DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -75,6 +87,16 @@ public class MassRowChange implements Change {
             project.rows.addAll(_oldRows);
             
             project.update();
+            
+            try {
+                DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

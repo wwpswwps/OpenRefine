@@ -635,6 +635,7 @@
 		"conf-pars-opt": "Configure Parsing Options &raquo;",
 		"reselect-files": "&laquo; Re-select Files",
 		"create-project": "Create Project &raquo;",
+		"save-project-to-db": "Save",
 		"next": "Next &raquo;",
 		"add-url": "Add Another URL",
 		"update-preview": "Update&nbsp;Preview",

@@ -36,6 +36,7 @@ package com.google.refine.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import com.google.refine.ProjectManager;
@@ -44,6 +45,8 @@ import com.google.refine.model.Cell;
 import com.google.refine.model.Column;
 import com.google.refine.model.Project;
 import com.google.refine.util.Pool;
+
+import com.google.refine.myDatabase.DatabaseOperation;
 
 public class CellChange implements Change {
     final public int     row;
@@ -65,6 +68,13 @@ public class CellChange implements Change {
         Column column = project.columnModel.getColumnByCellIndex(cellIndex);
         column.clearPrecomputes();
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
+    try {
+        DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -74,6 +84,13 @@ public class CellChange implements Change {
         Column column = project.columnModel.getColumnByCellIndex(cellIndex);
         column.clearPrecomputes();
         ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, column.getName());
+    try {
+        DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override

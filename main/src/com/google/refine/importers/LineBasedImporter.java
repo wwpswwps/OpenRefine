@@ -15,6 +15,8 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
+import javax.swing.JOptionPane;
+
 public class LineBasedImporter extends TabularImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(LineBasedImporter.class);
     
@@ -102,7 +104,7 @@ public class LineBasedImporter extends TabularImportingParserBase {
                 }
             }
         };
-        
+        // JOptionPane.showMessageDialog(null, "GDataImporter", "readTable", JOptionPane.WARNING_MESSAGE); // Alex
         TabularImportingParserBase.readTable(project, metadata, job, dataReader, fileSource, limit, options, exceptions);
     }
 }

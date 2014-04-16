@@ -52,6 +52,17 @@ import com.google.refine.model.Project;
 import com.google.refine.model.Row;
 import com.google.refine.util.JSONUtilities;
 
+import javax.swing.JOptionPane;
+import java.sql.*;
+import java.util.Date; 
+import java.util.Calendar; 
+import java.text.SimpleDateFormat;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.Transaction;
+
 abstract public class TabularImportingParserBase extends ImportingParserBase {
     private final static Logger logger = LoggerFactory.getLogger("ImportingParserBase");
     static public interface TableDataReader {
@@ -208,8 +219,142 @@ abstract public class TabularImportingParserBase extends ImportingParserBase {
                     }
                 }
             }
+            // JOptionPane.showMessageDialog(null, columnNames, "Test", JOptionPane.WARNING_MESSAGE); // Alex
+            // JOptionPane.showMessageDialog(null, project.rows, "Project.Rows", JOptionPane.WARNING_MESSAGE); // Alex
+            
+            // test(columnNames, project.rows, formatJobId(job), project); // Alex
         } catch (IOException e) {
             exceptions.add(e);
         }
+    }
+
+    // Test: Format Job ID --- Alex
+    public static String formatJobId(ImportingJob job) {
+        // System.out.println("!!!*********" + (job + "") + "************!!!");
+        String s = ("" + job).substring(41);
+        // System.out.println("!!!*********" + s + "**********!!!!!");
+        return s;
+    }
+    // Test: getRowElement --- Alex
+    public static String getRowEle(String row, int index) {
+
+        String[] rowEle = row.split(",");
+        ArrayList<String> result = new ArrayList<String>();
+
+        for(String s : rowEle)
+            result.add(s.trim());
+
+        return result.get(index);
+
+    }
+
+    // Test: format column --- Alex
+    public static String formatCol(String str) {
+        String result = "Col_";
+        for(int i = 0; i < str.length(); i++) {
+            if((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) >= 'a' && str.charAt(i) <= 'z') || (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z'))
+                result += str.charAt(i);
+        }
+        return result;
+    }
+    // Test --- Alex
+    public static void test(List columnNames, List rows, String jobId, Project project) {// List columnNames, List cells
+        // JOptionPane.showMessageDialog(null, "1", "Test", JOptionPane.WARNING_MESSAGE); // Alex
+        String driverName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";  // Load JDBC Driver
+        String dbURL = "jdbc:sqlserver://localhost:50076; DatabaseName=xxl";  // Connect to Server & DB连接服务器和数据库test
+        String userName = "xxl";  // UserName 用户名
+        String userPwd = "wwpswwpsxx";  // Pwd 密码
+        Connection dbConn;
+
+        try {
+            Class.forName(driverName);
+            dbConn = DriverManager.getConnection(dbURL, userName, userPwd);
+            System.out.println("Connection Successful!");  //如果连接成功 控制台输出Connection Successful!
+           
+            // JOptionPane.showMessageDialog(null, "2", "DB Conn Successful!", JOptionPane.WARNING_MESSAGE); // Alex
+           
+            Statement stmt=dbConn.createStatement();// Create SQL Queries 创建SQL命令对象
+
+
+
+            String selectJobId = "SELECT * FROM OpenRefineProject WHERE JobId = '" + jobId + "'";
+            ResultSet rs=stmt.executeQuery(selectJobId);
+
+            // boolean flag = rs.next();
+// if(flag == false){
+            
+        // }
+            // System.out.println("!!!*******" + selectJobId + "*********!!!");
+// JOptionPane.showMessageDialog(null, project.id, "Project.Rows", JOptionPane.WARNING_MESSAGE); // Alex
+        if(!rs.next()){
+            String insertJobId = "INSERT INTO OpenRefineProject VALUES('" + jobId + "')";
+            stmt.executeUpdate(insertJobId);
+
+            // Create table 创建表
+            // System.out.println("查询");
+            // JOptionPane.showMessageDialog(null, "columnNames", "Test", JOptionPane.WARNING_MESSAGE); // Alex
+            // JOptionPane.showMessageDialog(null, project.id, "Project.Rows", JOptionPane.WARNING_MESSAGE); // Alex
+            /*
+            Project's id is in main\src\com\google\refine\model
+            in the preview, it will be generated once, but when the project is
+            created, it will be generated another time and will not be changed
+            */
+            // System.out.println("开始读取数据");
+
+            Date now = new Date(); 
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+            String tableName = "Tb_" + dateFormat.format(now);
+
+
+            String createTable = "CREATE TABLE " + tableName + " (";
+
+            for(int ii = 0; ii < columnNames.size(); ii++) {
+                if(ii < columnNames.size() - 1)
+                    createTable += formatCol((String)columnNames.get(ii)) + " varchar(255), ";
+                else
+                    createTable += formatCol((String)columnNames.get(ii)) + " varchar(255))";
+            }
+
+            // System.out.print(createTable);
+            
+            stmt.executeUpdate(createTable);
+
+            // System.out.println("TB created!");
+
+            // System.out.println(rows.get(0));
+            // System.out.println(rows.get(1));
+
+
+            for(int jj = 0; jj < rows.size(); jj++) {
+
+                String insertRow = "INSERT INTO " + tableName + " VALUES(";
+                
+                for(int m = 0; m < columnNames.size(); m++) {
+                    if(m < columnNames.size() - 1)
+                        insertRow += "'" + getRowEle(rows.get(jj).toString(), m) + "', ";
+                    else
+                        insertRow += "'" + getRowEle(rows.get(jj).toString(), m) + "')";
+                }
+                stmt.executeUpdate(insertRow);
+            }
+            
+
+            // stmt.executeQuery("CREATE TABLE testSQL (id int, name varchar(255))");
+            // ResultSet rs=stmt.executeQuery("CREATE TABLE testSQL (id int, name varchar(255))");//返回SQL语句查询结果集(集合)
+            //循环输出每一条记录
+            // while(rs.next())
+            // {
+            // //输出每个字段
+            //     System.out.println(rs.getString("id")+"\t"+rs.getString("name")+"\t"+rs.getString("phone"));
+            // }
+            // System.out.println("读取完毕");
+            //关闭连接
+            stmt.close();//关闭命令对象连接
+            dbConn.close();//关闭数据库连接
+        }// Alex
+        } catch (Exception e) {
+            // JOptionPane.showMessageDialog(null, "3", "Failed!", JOptionPane.WARNING_MESSAGE); // Alex
+            e.printStackTrace();
+          }
     }
 }

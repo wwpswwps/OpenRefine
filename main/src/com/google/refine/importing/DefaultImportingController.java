@@ -56,6 +56,8 @@ import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
+import javax.swing.JOptionPane;
+
 public class DefaultImportingController implements ImportingController {
 
     protected RefineServlet servlet;
@@ -92,6 +94,7 @@ public class DefaultImportingController implements ImportingController {
         } else if ("update-format-and-options".equals(subCommand)) {
             doUpdateFormatAndOptions(request, response, parameters);
         } else if ("create-project".equals(subCommand)) {
+            // JOptionPane.showMessageDialog(null, "Maybe me even former???", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
             doCreateProject(request, response, parameters);
         } else {
             HttpUtilities.respond(response, "error", "No such sub command");
@@ -241,7 +244,7 @@ public class DefaultImportingController implements ImportingController {
     
     private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
         throws ServletException, IOException {
-    
+    // JOptionPane.showMessageDialog(null, "Found me First???", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
         long jobID = Long.parseLong(parameters.getProperty("jobID"));
         ImportingJob job = ImportingManager.getJob(jobID);
         if (job == null) {
@@ -252,21 +255,25 @@ public class DefaultImportingController implements ImportingController {
         job.updating = true;
         job.touch();
         try {
+        // JOptionPane.showMessageDialog(null, "111", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
             JSONObject config = job.getOrCreateDefaultConfig();
             if (!("ready".equals(config.getString("state")))) {
                 HttpUtilities.respond(response, "error", "Job not ready");
                 return;
             }
-            
+            // JOptionPane.showMessageDialog(null, "222", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
             String format = request.getParameter("format");
             JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
                     request.getParameter("options"));
-            
+            // JOptionPane.showMessageDialog(null, "333", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
             List<Exception> exceptions = new LinkedList<Exception>();
-            
+            // JOptionPane.showMessageDialog(null, "444", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
+
             ImportingUtilities.createProject(job, format, optionObj, exceptions, false);
             
+            // JOptionPane.showMessageDialog(null, "555", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
             HttpUtilities.respond(response, "ok", "done");
+            // JOptionPane.showMessageDialog(null, "666", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
         } catch (JSONException e) {
             throw new ServletException(e);
         }

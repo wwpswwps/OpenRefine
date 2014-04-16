@@ -47,8 +47,15 @@ Refine.DefaultImportingController.prototype._showParsingPanel = function(hasFile
   
   this._prepareParsingPanel();
   this._parsingPanelElmts.nextButton.click(function() {
+    // alert("hello!");
     self._createProject();
   });
+
+  // this._parsingPanelElmts.alextest.click(function() { // Alex test JS
+  //   alert("hello!");
+  //   self._createProject();
+  // });
+
   if (hasFileSelection) {
     this._parsingPanelElmts.previousButton.click(function() {
       self._createProjectUI.showCustomPanel(self._fileSelectionPanel);
@@ -94,6 +101,7 @@ Refine.DefaultImportingController.prototype._prepareParsingPanel = function() {
 
   this._parsingPanelElmts.startOverButton.html($.i18n._('core-buttons')["startover"]);
   this._parsingPanelElmts.nextButton.html($.i18n._('core-buttons')["create-project"]);
+  // this._parsingPanelElmts.alextest.html($.i18n._('core-buttons')["save-project-to-db"]);// Alex
   $('#or-import-parsopt').text($.i18n._('core-index-import')["parsing-options"]);
   $('#or-import-projname').html($.i18n._('core-index-import')["project-name"]);
   $('#or-import-updating').text($.i18n._('core-index-import')["updating-preview"]);

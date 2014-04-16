@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Serializable;
 import java.io.Writer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +53,7 @@ import com.google.refine.model.Column;
 import com.google.refine.model.ColumnGroup;
 import com.google.refine.model.Project;
 import com.google.refine.model.Row;
+import com.google.refine.myDatabase.DatabaseOperation;
 import com.google.refine.util.Pool;
 
 public class ColumnSplitChange implements Change {
@@ -223,6 +225,15 @@ public class ColumnSplitChange implements Change {
             }
             
             project.update();
+            try {
+                DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
     
@@ -249,6 +260,16 @@ public class ColumnSplitChange implements Change {
             project.columnModel.columnGroups.addAll(_oldColumnGroups);
             
             project.update();
+            
+            try {
+                DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

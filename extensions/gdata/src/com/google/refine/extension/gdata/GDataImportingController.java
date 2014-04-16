@@ -76,6 +76,8 @@ import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 import com.google.refine.util.ParsingUtilities;
 
+import javax.swing.JOptionPane;
+
 public class GDataImportingController implements ImportingController {
 
     protected RefineServlet servlet;
@@ -290,7 +292,7 @@ public class GDataImportingController implements ImportingController {
     private void doParsePreview(
         HttpServletRequest request, HttpServletResponse response, Properties parameters)
             throws ServletException, IOException {
-        
+        // JOptionPane.showMessageDialog(null, "I'm Preview!!!", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
         String token = TokenCookie.getToken(request);
         
         long jobID = Long.parseLong(parameters.getProperty("jobID"));
@@ -299,7 +301,7 @@ public class GDataImportingController implements ImportingController {
             HttpUtilities.respond(response, "error", "No such import job");
             return;
         }
-        
+        // JOptionPane.showMessageDialog(null, "GDataImportingController\ndoParsePreview", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
         job.updating = true;
         try {
             JSONObject optionObj = ParsingUtilities.evaluateJsonStringToObject(
@@ -353,7 +355,7 @@ public class GDataImportingController implements ImportingController {
     
     private void doCreateProject(HttpServletRequest request, HttpServletResponse response, Properties parameters)
         throws ServletException, IOException {
-    
+    // JOptionPane.showMessageDialog(null, "I'm Create!!!", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
         final String token = TokenCookie.getToken(request);
         
         long jobID = Long.parseLong(parameters.getProperty("jobID"));

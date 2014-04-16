@@ -36,11 +36,13 @@ package com.google.refine.model.changes;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import com.google.refine.ProjectManager;
 import com.google.refine.history.Change;
 import com.google.refine.model.Project;
+import com.google.refine.myDatabase.DatabaseOperation;
 import com.google.refine.util.Pool;
 
 public class ColumnRenameChange extends ColumnChange {
@@ -58,6 +60,15 @@ public class ColumnRenameChange extends ColumnChange {
             ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _oldColumnName);
             project.columnModel.getColumnByName(_oldColumnName).setName(_newColumnName);
             project.columnModel.update();
+            try {
+                DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -67,6 +78,15 @@ public class ColumnRenameChange extends ColumnChange {
             ProjectManager.singleton.getInterProjectModel().flushJoinsInvolvingProjectColumn(project.id, _newColumnName);
             project.columnModel.getColumnByName(_newColumnName).setName(_oldColumnName);
             project.columnModel.update();
+            try {
+                DatabaseOperation.databaseRowsColsUpdate(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

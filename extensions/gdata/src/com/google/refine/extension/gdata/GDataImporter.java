@@ -52,6 +52,7 @@ import com.google.refine.importing.ImportingJob;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
 
+import javax.swing.JOptionPane;
 /**
  * OpenRefine parser for Google Spreadsheets.
  * 
@@ -148,6 +149,7 @@ public class GDataImporter {
                 worksheetEntry.getTitle().getPlainText();
             
             setProgress(job, fileSource, 0);
+            // JOptionPane.showMessageDialog(null, "GDataImporter", "readTable", JOptionPane.WARNING_MESSAGE); // Alex
             TabularImportingParserBase.readTable(
                 project,
                 metadata,

@@ -66,6 +66,8 @@ import com.google.refine.model.Recon.Judgment;
 import com.google.refine.model.ReconCandidate;
 import com.google.refine.util.JSONUtilities;
 
+import javax.swing.JOptionPane;
+
 public class ExcelImporter extends TabularImportingParserBase {
     static final Logger logger = LoggerFactory.getLogger(ExcelImporter.class);
     
@@ -206,7 +208,7 @@ public class ExcelImporter extends TabularImportingParserBase {
                     return cells;
                 }
             };
-            
+            // JOptionPane.showMessageDialog(null, "ExcelImporter", "readTable", JOptionPane.WARNING_MESSAGE); // Alex
             TabularImportingParserBase.readTable(
                 project,
                 metadata,

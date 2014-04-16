@@ -44,6 +44,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,6 +89,10 @@ import com.google.refine.importing.ImportingManager.Format;
 import com.google.refine.importing.UrlRewriter.Result;
 import com.google.refine.model.Project;
 import com.google.refine.util.JSONUtilities;
+
+import com.google.refine.myDatabase.DatabaseOperation;
+
+import javax.swing.JOptionPane;
 
 public class ImportingUtilities {
     final static protected Logger logger = LoggerFactory.getLogger("importing-utilities");
@@ -973,6 +978,7 @@ public class ImportingUtilities {
             final JSONObject optionObj,
             final List<Exception> exceptions,
             boolean synchronous) {
+        // JOptionPane.showMessageDialog(null, "I found you!!!", "Yoo~ Man~", JOptionPane.WARNING_MESSAGE); // Alex
         final Format record = ImportingManager.formatToRecord.get(format);
         if (record == null || record.parser == null) {
             // TODO: what to do?
@@ -1013,7 +1019,7 @@ public class ImportingUtilities {
             encoding = "UTF-8";
         }
         pm.setEncoding(encoding);
-        
+        // JOptionPane.showMessageDialog(null, "111111", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
         record.parser.parse(
             project,
             pm,
@@ -1024,7 +1030,7 @@ public class ImportingUtilities {
             optionObj,
             exceptions
         );
-        
+        // JOptionPane.showMessageDialog(null, "222222", "Location:", JOptionPane.WARNING_MESSAGE); // Alex
         if (!job.canceled) {
             if (exceptions.size() == 0) {
                 project.update(); // update all internal models, indexes, caches, etc.
@@ -1038,6 +1044,13 @@ public class ImportingUtilities {
             }
             job.touch();
             job.updating = false;
+        }
+        try {
+            DatabaseOperation.databaseTableInput(DatabaseOperation.getReorderedRows(project),project.columnModel.columns,project.getMetadata().getName(),project.id);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     
